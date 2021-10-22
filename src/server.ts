@@ -19,7 +19,7 @@ const PORT = process.env.PORT;
 const app = express();
 
 mongoose
-  .connect(DB, { autoIndex: true })
+  .connect(DB)
   .then(() => console.log('DB connected successfully'))
   .catch((err: any) => console.error(err));
 

@@ -8,6 +8,8 @@ const tourController = new TourController();
 
 router.route('/tours').get(tourController.getAll).post(tourController.create);
 
+router.route('/tour-stats').get(tourController.getTourStats);
+
 router
   .route('/tours/:id')
   .get(tourController.getOne)

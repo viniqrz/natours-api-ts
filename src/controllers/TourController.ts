@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-
 import { Tour } from '../models/tourModel';
+import { APIFeatures } from '../helpers/APIFeatures';
 
 class TourController {
   constructor() {
@@ -12,7 +12,15 @@ class TourController {
   }
 
   public async getAll(req: Request, res: Response): Promise<void> {
-    const tours = await Tour.find();
+    // Creates mongoose query
+    const features = new APIFeatures(Tour, req.query)
+      .filter()
+      .sort()
+      .select()
+      .paginate();
+
+    // Executes mongoose query
+    const tours = await features.getQuery();
 
     res.json({
       status: 'success',
@@ -66,6 +74,30 @@ class TourController {
 
     res.json({
       status: 'success',
+      data: null,
+    });
+  }
+
+  public async getTourStats(req: Request, res: Response): Promise<void> {
+    const stats = await Tour.aggregate([
+      { $match: { ratingsAverage: { $gte: 4.5 } } },
+      {
+        $group: {
+          _id: '$difficulty',
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' },
+        },
+      },
+      { $sort: { avgPrice: -1 } },
+    ]);
+
+    res.json({
+      status: 'success',
+      data: {
+        stats,
+      },
     });
   }
 }
