@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { Model, model, Schema } from "mongoose";
 import { User } from "../@types/models/User";
 import isEmail from "validator/lib/isEmail";
 
