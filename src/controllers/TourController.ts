@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import { Tour } from '../models/tourModel';
-import { APIFeatures } from '../helpers/APIFeatures';
+import { Request, Response } from "express";
+import { TourModel } from "../models/tourModel";
+import { APIFeatures } from "../helpers/APIFeatures";
 
 class TourController {
   constructor() {
@@ -13,7 +13,7 @@ class TourController {
 
   public async getAll(req: Request, res: Response): Promise<void> {
     // Creates mongoose query
-    const features = new APIFeatures(Tour, req.query)
+    const features = new APIFeatures(TourModel, req.query)
       .filter()
       .sort()
       .select()
@@ -23,7 +23,7 @@ class TourController {
     const tours = await features.getQuery();
 
     res.json({
-      status: 'success',
+      status: "success",
       data: {
         tours,
       },
@@ -33,10 +33,10 @@ class TourController {
   public async getOne(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
 
-    const tour = await Tour.findOne({ _id: id });
+    const tour = await TourModel.findOne({ _id: id });
 
     res.json({
-      status: 'success',
+      status: "success",
       data: {
         tour,
       },
@@ -44,10 +44,10 @@ class TourController {
   }
 
   public async create(req: Request, res: Response): Promise<void> {
-    const tour = await Tour.create(req.body);
+    const tour = await TourModel.create(req.body);
 
     res.status(201).json({
-      status: 'success',
+      status: "success",
       data: {
         tour,
       },
@@ -57,10 +57,10 @@ class TourController {
   public async update(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
 
-    const tour = await Tour.updateOne({ _id: id }, req.body);
+    const tour = await TourModel.updateOne({ _id: id }, req.body);
 
     res.json({
-      status: 'success',
+      status: "success",
       data: {
         tour,
       },
@@ -70,31 +70,31 @@ class TourController {
   public async delete(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
 
-    const tour = await Tour.deleteOne({ _id: id });
+    const tour = await TourModel.deleteOne({ _id: id });
 
     res.json({
-      status: 'success',
+      status: "success",
       data: null,
     });
   }
 
   public async getTourStats(req: Request, res: Response): Promise<void> {
-    const stats = await Tour.aggregate([
+    const stats = await TourModel.aggregate([
       { $match: { ratingsAverage: { $gte: 4.5 } } },
       {
         $group: {
-          _id: '$difficulty',
-          avgRating: { $avg: '$ratingsAverage' },
-          avgPrice: { $avg: '$price' },
-          minPrice: { $min: '$price' },
-          maxPrice: { $max: '$price' },
+          _id: "$difficulty",
+          avgRating: { $avg: "$ratingsAverage" },
+          avgPrice: { $avg: "$price" },
+          minPrice: { $min: "$price" },
+          maxPrice: { $max: "$price" },
         },
       },
       { $sort: { avgPrice: -1 } },
     ]);
 
     res.json({
-      status: 'success',
+      status: "success",
       data: {
         stats,
       },

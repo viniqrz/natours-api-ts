@@ -1,5 +1,5 @@
-import { ParsedQs } from 'qs';
-import { Model } from 'mongoose';
+import { ParsedQs } from "qs";
+import { Model } from "mongoose";
 
 interface RequestQuery extends ParsedQs {
   sort: string;
@@ -12,7 +12,7 @@ export class APIFeatures {
   protected readonly requestQuery: RequestQuery;
   protected query: any;
 
-  constructor(model: Model<any[], any, {}, any>, requestQuery: ParsedQs) {
+  constructor(model: Model<any, any, {}, any>, requestQuery: ParsedQs) {
     // Creates mongoose query and sets requestQuery
     this.query = model.find();
     this.requestQuery = requestQuery as RequestQuery;
@@ -31,7 +31,7 @@ export class APIFeatures {
 
   public filter(): APIFeatures {
     const queryObj = { ...this.requestQuery };
-    const excludedFields = ['limit', 'sort', 'page', 'fields'];
+    const excludedFields = ["limit", "sort", "page", "fields"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     let queryStr = JSON.stringify(queryObj);
@@ -44,9 +44,9 @@ export class APIFeatures {
 
   public sort(): APIFeatures {
     if (this.requestQuery.sort) {
-      this.query.sort(this.requestQuery.sort.split(',').join(' '));
+      this.query.sort(this.requestQuery.sort.split(",").join(" "));
     } else {
-      this.query.sort('-createdAt');
+      this.query.sort("-createdAt");
     }
 
     return this;
@@ -61,11 +61,11 @@ export class APIFeatures {
 
   public select(): APIFeatures {
     if (this.requestQuery.fields) {
-      const fields = (this.requestQuery.fields as string).split(',').join(' ');
+      const fields = (this.requestQuery.fields as string).split(",").join(" ");
 
       this.query.select(fields);
     } else {
-      this.query.select('-__v');
+      this.query.select("-__v");
     }
 
     return this;
