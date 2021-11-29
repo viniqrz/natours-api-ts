@@ -4,10 +4,12 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-import { router as tourRouter } from "./routes/TourRouter";
+import { tourRouter } from "./routes/TourRouter";
+import { userRouter } from "./routes/UserRouter";
 import { NotReachableError } from "./@types/errors/NotReachableError";
 import { Request, Response, NextFunction } from "express";
 import { errorHandler } from "./middlewares/errorHandler";
+import { notReachableRouteHandler } from "./middlewares/notReachable";
 
 const DB = process.env.DB_URL?.replace(
   "<PASSWORD>",
@@ -16,23 +18,17 @@ const DB = process.env.DB_URL?.replace(
 
 const PORT = process.env.PORT;
 
+mongoose
+.connect(DB)
+.then(() => console.log("DB connected successfully"))
+.catch((err: any) => console.error(err));
+
 const app = express();
 
-mongoose
-  .connect(DB)
-  .then(() => console.log("DB connected successfully"))
-  .catch((err: any) => console.error(err));
-
 app.use(express.json());
-
 app.use("/api/v1", tourRouter);
-
-app.all("*", (req: Request, res: Response, next: NextFunction) => {
-  const error = new NotReachableError(req.originalUrl);
-
-  next(error);
-});
-
+app.use("/api/v1", userRouter);
+app.all("*", notReachableRouteHandler);
 app.use(errorHandler);
 
 app.listen(PORT, () => console.log("Listening on port " + PORT));
