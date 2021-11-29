@@ -1,13 +1,13 @@
 import * as mongoose from "mongoose";
 import * as express from "express";
-import { Request, Response, NextFunction } from "express";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
 import { router as tourRouter } from "./routes/TourRouter";
 import { NotReachableError } from "./@types/errors/NotReachableError";
-import { BaseError } from "./@types/errors/BaseError";
+import { Request, Response, NextFunction } from "express";
+import { errorHandler } from "./middlewares/errorHandler";
 
 const DB = process.env.DB_URL?.replace(
   "<PASSWORD>",
@@ -33,11 +33,6 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
   next(error);
 });
 
-app.use((err: BaseError, req: Request, res: Response, next: NextFunction) => {
-  res.status(err.code).json({
-    status: "error",
-    message: err.message,
-  });
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => console.log("Listening on port " + PORT));

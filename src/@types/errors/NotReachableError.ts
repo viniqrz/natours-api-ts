@@ -1,11 +1,13 @@
 import { BaseError } from "./BaseError";
 
 export class NotReachableError extends Error implements BaseError {
-  public code: number;
+  public statusCode: number;
+  public name: string;
 
   constructor(url: string) {
     super(`Can't find ${url} on this server!`);
 
-    this.code = 404;
+    this.statusCode = 404;
+    this.name = "NotReachable";
   }
 }

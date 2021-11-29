@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { TourModel } from "../models/tourModel";
 import { APIFeatures } from "../helpers/APIFeatures";
+import { NotFoundError } from "../@types/errors/NotFoundError";
 
 class TourController {
   constructor() {
@@ -34,6 +35,8 @@ class TourController {
     const { id } = req.params;
 
     const tour = await TourModel.findOne({ _id: id });
+
+    if (!tour) throw new NotFoundError("Tour");
 
     res.json({
       status: "success",

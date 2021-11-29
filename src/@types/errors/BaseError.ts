@@ -1,4 +1,6 @@
 export interface BaseError extends Error {
   name: string;
-  code: number;
+  statusCode: number;
+  path?: string;
+  value?: string;
 }
