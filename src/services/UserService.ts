@@ -1,23 +1,18 @@
-import { UserAndToken, UserDto, UserWithoutPassword } from "../@types/dtos/UserDto";
-import { NotFoundError } from "../@types/errors/NotFoundError";
-import { UserAlreadyExistsError } from "../@types/errors/UserAlreadyExistsError";
 import { WrongEmailOrPasswordError } from "../@types/errors/WrongEmailOrPasswordError";
-import { User } from "../@types/models/User";
+import { UserAndToken, UserDto, UserWithoutPassword } from "../@types/dtos/UserDto";
+import { UserAlreadyExistsError } from "../@types/errors/UserAlreadyExistsError";
+import { IUserService } from "../@types/services/IUserService";
 import { compareHash } from "../helpers/compareHash";
 import { createHash } from "../helpers/createHash";
 import { generateJwt } from "../helpers/generateJwt";
 import { userModel } from '../models/userModel';
-
-
-interface IUserService {
-  signup(dto: UserDto): Promise<UserWithoutPassword>;
-  authenticate(email: string, password: string): Promise<UserAndToken>;
-}
+import { User } from "../@types/models/User";
 
 export class UserService implements IUserService {
   private JWT_EXPIRATION_TIME = '1h';
 
   public async signup(dto: UserDto): Promise<UserWithoutPassword> {
+
     const { email, password } = dto;
 
     const userAlreadyExists = await userModel.findOne({ email });
@@ -31,7 +26,11 @@ export class UserService implements IUserService {
     return userWithoutPassword;
   }
 
-  public async authenticate(email: string, password: string): Promise<UserAndToken> {
+  public async authenticate(
+    email: string,
+    password: string
+  ): Promise<UserAndToken> {
+
     const user = await userModel.findOne({ email });
     if (!user) throw new WrongEmailOrPasswordError();
 
@@ -42,11 +41,10 @@ export class UserService implements IUserService {
     const token = generateJwt(userWithoutPassword, this.JWT_EXPIRATION_TIME);
 
     return { user: userWithoutPassword, token };
-  } 
+  }
 
-  private omitPassword(user: User) {
+  private omitPassword(user: User): UserWithoutPassword {
     const {password, ...userWithoutPassword} = user;
-
     return userWithoutPassword;
   }
 }
