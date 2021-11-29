@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { User } from "../@types/models/User";
+import isEmail from "validator/lib/isEmail";
 
 const userSchema = new Schema<User>({
   firstName: {
@@ -16,6 +17,9 @@ const userSchema = new Schema<User>({
     type: String,
     maxlength: [80, "Email can't be longer than 80 characters"],
     required: [true, "User must have a last name"],
+    unique: true,
+    lowercase: true,
+    validate: [isEmail, "User must have a valid email"],
   },
   password: {
     type: String,
