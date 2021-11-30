@@ -46,6 +46,15 @@ export class UserService implements IUserService {
     return { user: userWithoutPassword, token };
   }
 
+  public async forgotPassword(email: string): Promise<void> {
+    
+    const user = await userModel.findOne({ email });
+    if (!user) throw new NotFoundError('User');
+  
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+  }
+
   public async getAll(): Promise<UserWithoutPassword[]> {
     const users = await userModel.find();
 

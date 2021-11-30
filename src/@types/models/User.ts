@@ -3,6 +3,10 @@ export interface User {
   lastName: string;
   email: string;
   password: string;
-  photo: string;
+  photo?: string;
   role: "user" | "guide" | "lead-guide" | "admin";
+  passwordChangedAt?: Date;
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  createPasswordResetToken(): string;
 }

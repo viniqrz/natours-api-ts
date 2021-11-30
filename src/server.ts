@@ -6,8 +6,6 @@ dotenv.config();
 
 import { tourRouter } from "./routes/TourRouter";
 import { userRouter } from "./routes/UserRouter";
-import { NotReachableError } from "./@types/errors/NotReachableError";
-import { Request, Response, NextFunction } from "express";
 import { errorHandler } from "./middlewares/errorHandler";
 import { notReachableRouteHandler } from "./middlewares/notReachable";
 
