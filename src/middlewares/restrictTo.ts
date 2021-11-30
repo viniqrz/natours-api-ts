@@ -1,9 +1,8 @@
 import { NextFunction, Response } from "express";
 import { IRequest } from "../@types/express/IRequest";
-import { NotOwnerError } from "../@types/errors/NotOwnerError";
 import { RoleNotAllowedError } from "../@types/errors/RoleNotAllowedError";
 
-export function restrictTo(...roles: string[]) {
+export function restrictTo(roles: Array<"user" | "guide" | "lead-guide" | "admin">) {
   return function (req: IRequest, res: Response, next: NextFunction) {
     try {
       const isAllowed = roles.includes(req.user.role);

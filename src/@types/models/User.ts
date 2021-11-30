@@ -4,5 +4,5 @@ export interface User {
   email: string;
   password: string;
   photo: string;
-  role: string;
+  role: "user" | "guide" | "lead-guide" | "admin";
 }
