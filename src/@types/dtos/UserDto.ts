@@ -5,6 +5,7 @@ export interface UserDto {
   email: string;
   password: string;
   photo?: string;
+  role?: string;
 }
 
 export interface PartialUserDto {
@@ -17,11 +18,12 @@ export interface PartialUserDto {
 }
 
 export interface UserWithoutPassword {
-  _id?: string;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
   photo?: string;
+  role: string;
 }
 
 export interface UserAndToken {

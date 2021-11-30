@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { TourController } from "../controllers/TourController";
 import { catchAsync } from "../helpers/catchAsync";
+import { ensureAuth } from "../middlewares/ensureAuth";
 
 const router = Router();
 
@@ -9,17 +10,17 @@ const tourController = new TourController();
 
 router
   .route("/tours")
-    .get(catchAsync(tourController.getAll))
-    .post(catchAsync(tourController.create));
+    .get(ensureAuth, catchAsync(tourController.getAll))
+    .post(ensureAuth, catchAsync(tourController.create));
 
 router
   .route("/tour-stats")
-    .get(tourController.getTourStats);
+    .get(ensureAuth, tourController.getTourStats);
 
 router
   .route("/tours/:id")
-    .get(catchAsync(tourController.getOne))
-    .patch(catchAsync(tourController.update))
-    .delete(catchAsync(tourController.delete));
+    .get(ensureAuth, catchAsync(tourController.getOne))
+    .patch(ensureAuth, catchAsync(tourController.update))
+    .delete(ensureAuth, catchAsync(tourController.delete));
 
 export { router as tourRouter };

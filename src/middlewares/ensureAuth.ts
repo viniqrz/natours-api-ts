@@ -12,7 +12,7 @@ export function ensureAuth(req: IRequest, res: Response, next: NextFunction) {
     if (!bearer) throw new NoTokenSentError();
 
     const [, token] = bearer.split(' ');
-    const payload = verify(token, process.env.JWT_TOKEN) as JwtPayload;
+    const payload = verify(token, process.env.JWT_SECRET) as JwtPayload;
 
     req.user = payload.data;
 

@@ -2,6 +2,8 @@ import { Router } from "express";
 import { UserController } from "../controllers/UserController";
 import { catchAsync } from "../helpers/catchAsync";
 import { UserService } from "../services/UserService";
+import { ensureAuth } from '../middlewares/ensureAuth';
+import { ensureIsOwnerOrAdmin } from "../middlewares/ensureIsOwnerOrAdmin";
 
 const router = Router();
 
@@ -19,13 +21,13 @@ const {
 router
   .route('/users')
     .post(catchAsync(signup))
-    .get(catchAsync(getAll))
+    .get(ensureAuth, catchAsync(getAll))
 
 router
   .route('/users/:id')
-  .get(catchAsync(getOne))
-  .patch(catchAsync(update))
-  .delete(catchAsync(userController.delete));
+  .get(ensureAuth, catchAsync(getOne))
+  .patch(ensureAuth, ensureIsOwnerOrAdmin, catchAsync(update))
+  .delete(ensureAuth, ensureIsOwnerOrAdmin, catchAsync(userController.delete));
 
 router
   .route('/users/authenticate')

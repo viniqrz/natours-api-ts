@@ -5,9 +5,9 @@ export class NoTokenSentError extends Error implements BaseError {
   public name: string;
 
   constructor() {
-    super(`No token sent!`);
+    super(`Access denied: no token sent!`);
 
-    this.statusCode = 400;
+    this.statusCode = 401;
     this.name = "NoTokenSent";
   }
 }

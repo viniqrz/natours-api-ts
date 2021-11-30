@@ -25,6 +25,11 @@ const userSchema = new Schema<User>({
     type: String,
     required: [true, "User must have a password"],
   },
+  role: {
+    type: String,
+    enum: ["user", "guide", "lead-guide", "admin"],
+    default: "user",
+  },
   photo: {
     type: String,
     maxlength: [80, "Email can't be longer than 80 characters"],
