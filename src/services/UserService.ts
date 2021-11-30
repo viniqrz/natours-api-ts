@@ -9,6 +9,7 @@ import { userModel } from '../models/userModel';
 import { User } from "../@types/models/User";
 import { ObjectId } from "mongoose";
 import { NotFoundError } from "../@types/errors/NotFoundError";
+import { EmptyBodyError } from "../@types/errors/EmptyBodyError";
 
 export class UserService implements IUserService {
   private JWT_EXPIRATION_TIME = '1h';
@@ -60,14 +61,18 @@ export class UserService implements IUserService {
   }
 
   public async update(
-    id: string,
+    _id: string,
     partial: PartialUserDto
   ): Promise<UserWithoutPassword> {
+    if (Object.keys(partial).length < 1) throw new EmptyBodyError();
+
     if ('password' in partial) {
       partial.password = await createHash(partial.password);
     }
     
-    const user = await userModel.findByIdAndUpdate(id, partial);
+    const user = await userModel.findByIdAndUpdate({ _id }, partial);
+
+    Object.keys(partial).forEach((key) => user[key] = partial[key]);
 
     return this.omitPassword(user);
   }
