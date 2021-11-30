@@ -7,5 +7,5 @@ dotenv.config();
 export function generateJwt(user: UserWithoutPassword, expiresIn: string) {
   return sign({
     data: user
-  }, process.env.JWT_TOKEN, { expiresIn });
+  }, process.env.JWT_SECRET, { expiresIn });
 }

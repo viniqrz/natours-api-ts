@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { UserController } from "../controllers/UserController";
+import { catchAsync } from "../helpers/catchAsync";
 import { UserService } from "../services/UserService";
 
 const router = Router();
@@ -11,10 +12,10 @@ const { signup, authenticate } = userController;
 
 router
   .route('/users')
-    .post(signup)
+    .post(catchAsync(signup))
 
 router
   .route('/users/authenticate')
-    .post(authenticate)
+    .post(catchAsync(authenticate))
 
 export { router as userRouter };

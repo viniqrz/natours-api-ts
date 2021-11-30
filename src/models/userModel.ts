@@ -16,7 +16,7 @@ const userSchema = new Schema<User>({
   email: {
     type: String,
     maxlength: [80, "Email can't be longer than 80 characters"],
-    required: [true, "User must have a last name"],
+    required: [true, "User must have an email"],
     unique: true,
     lowercase: true,
     validate: [isEmail, "User must have a valid email"],

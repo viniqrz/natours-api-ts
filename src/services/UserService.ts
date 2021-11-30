@@ -1,5 +1,5 @@
 import { WrongEmailOrPasswordError } from "../@types/errors/WrongEmailOrPasswordError";
-import { UserAndToken, UserDto, UserWithoutPassword } from "../@types/dtos/UserDto";
+import { PartialUserDto, UserAndToken, UserDto, UserWithoutPassword } from "../@types/dtos/UserDto";
 import { UserAlreadyExistsError } from "../@types/errors/UserAlreadyExistsError";
 import { IUserService } from "../@types/services/IUserService";
 import { compareHash } from "../helpers/compareHash";
@@ -7,6 +7,7 @@ import { createHash } from "../helpers/createHash";
 import { generateJwt } from "../helpers/generateJwt";
 import { userModel } from '../models/userModel';
 import { User } from "../@types/models/User";
+import { ObjectId } from "mongoose";
 
 export class UserService implements IUserService {
   private JWT_EXPIRATION_TIME = '1h';
@@ -20,7 +21,7 @@ export class UserService implements IUserService {
 
     dto.password = await createHash(password);
 
-    const user = await userModel.create({ dto });
+    const user = await userModel.create(dto);
     const userWithoutPassword = this.omitPassword(user);
 
     return userWithoutPassword;
@@ -43,8 +44,31 @@ export class UserService implements IUserService {
     return { user: userWithoutPassword, token };
   }
 
+  public async getAll(): Promise<UserWithoutPassword[]> {
+    const users = await userModel.find();
+
+    return users.map((u) => this.omitPassword(u));
+  }
+
+  public async getOne(id: string): Promise<UserWithoutPassword> {
+    const user = await userModel.findById(id);
+
+    return this.omitPassword(user);
+  }
+
+  public async update(id: string, partial: PartialUserDto): Promise<UserWithoutPassword> {
+    const user = await userModel.findByIdAndUpdate(id, partial);
+
+    return this.omitPassword(user);
+  }
+
+  public async delete(id: string): Promise<UserWithoutPassword> {
+    return userModel.findByIdAndDelete(id);
+  }
+
   private omitPassword(user: User): UserWithoutPassword {
-    const {password, ...userWithoutPassword} = user;
+    const {password, ...userWithoutPassword} = user["_doc"];
+
     return userWithoutPassword;
   }
 }
