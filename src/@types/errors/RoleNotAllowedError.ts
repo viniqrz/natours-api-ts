@@ -7,7 +7,7 @@ export class RoleNotAllowedError extends Error implements BaseError {
   constructor(role: string) {
     super(`Access denied: role ${role} not allowed.`);
 
-    this.statusCode = 401;
+    this.statusCode = 403;
     this.name = "RoleNotAllowed";
   }
 }
