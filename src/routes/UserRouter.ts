@@ -4,6 +4,7 @@ import { catchAsync } from "../helpers/catchAsync";
 import { UserService } from "../services/UserService";
 import { ensureAuth } from '../middlewares/ensureAuth';
 import { ensureIsOwnerOrAdmin } from "../middlewares/ensureIsOwnerOrAdmin";
+import { ensureBodyIsUser } from "../middlewares/ensureBodyIsUser";
 
 const router = Router();
 
@@ -20,7 +21,7 @@ const {
 
 router
   .route('/users')
-    .post(catchAsync(signup))
+    .post(ensureBodyIsUser, catchAsync(signup))
     .get(ensureAuth, catchAsync(getAll))
 
 router
