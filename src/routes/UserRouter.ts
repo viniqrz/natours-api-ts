@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Response, Request, NextFunction, Router } from "express";
 import { UserController } from "../controllers/UserController";
 import { catchAsync } from "../helpers/catchAsync";
 import { UserService } from "../services/UserService";

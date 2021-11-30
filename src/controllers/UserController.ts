@@ -6,7 +6,7 @@ export class UserController {
     this.signup = this.signup.bind(this);
     this.authenticate = this.authenticate.bind(this);
     this.forgotPassword = this.forgotPassword.bind(this);
-    this.resetPassword = this.forgotPassword.bind(this);
+    this.resetPassword = this.resetPassword.bind(this);
     this.getAll = this.getAll.bind(this);
     this.getOne = this.getOne.bind(this);
     this.update = this.update.bind(this);

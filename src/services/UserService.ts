@@ -78,17 +78,20 @@ export class UserService implements IUserService {
 
     const user = await userModel
       .findOne({
-        passwordResetToken: hash,
-        passwordResetExpires: { $gt: new Date() }
+        passwordResetToken: hash
       });
 
     if (!user) throw new NotFoundError('user');
 
-    user.password = password;
+    if (user.passwordResetExpires < new Date()) throw new NotFoundError('user');
+
+    user.password = await createHash(password);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
 
     await user.save();
+
+    console.log('Success!');
   } 
 
   public async getAll(): Promise<UserWithoutPassword[]> {
