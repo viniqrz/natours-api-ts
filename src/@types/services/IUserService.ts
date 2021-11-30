@@ -6,7 +6,7 @@ import { User } from "../models/User";
 export interface IUserService {
   signup(dto: UserDto): Promise<UserWithoutPassword>;
   authenticate(email: string, password: string): Promise<UserAndToken>;
-  forgotPassword(email: string): Promise<void>;
+  forgotPassword(email: string, req: Request): Promise<void>;
   getAll(): Promise<UserWithoutPassword[]>;
   getOne(id: string): Promise<UserWithoutPassword>;
   update(id: string, partial: PartialUserDto): Promise<UserWithoutPassword>;

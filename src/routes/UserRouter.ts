@@ -14,6 +14,8 @@ const userController = new UserController(userService);
 const {
   signup,
   authenticate,
+  forgotPassword,
+  resetPassword,
   getAll,
   getOne,
   update,
@@ -22,7 +24,7 @@ const {
 router
   .route('/users')
     .post(ensureBodyIsUser, catchAsync(signup))
-    .get(ensureAuth, catchAsync(getAll))
+    .get(ensureAuth, catchAsync(getAll));
 
 router
   .route('/users/:id')
@@ -32,6 +34,9 @@ router
 
 router
   .route('/users/authenticate')
-    .post(catchAsync(authenticate))
+    .post(catchAsync(authenticate));
+
+router.post('/users/forgotPassword', catchAsync(forgotPassword));
+router.patch('/users/resetPassword/:token', catchAsync(resetPassword));
 
 export { router as userRouter };

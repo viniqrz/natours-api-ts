@@ -5,6 +5,8 @@ export class UserController {
   constructor(private userService: UserService) {
     this.signup = this.signup.bind(this);
     this.authenticate = this.authenticate.bind(this);
+    this.forgotPassword = this.forgotPassword.bind(this);
+    this.resetPassword = this.forgotPassword.bind(this);
     this.getAll = this.getAll.bind(this);
     this.getOne = this.getOne.bind(this);
     this.update = this.update.bind(this);
@@ -35,13 +37,38 @@ export class UserController {
     });
   }
 
+  public async forgotPassword(req: Request, res: Response): Promise<void> {
+
+    const { email } = req.body;
+
+    await this.userService.forgotPassword(email, req);
+
+    res.status(200).json({
+      status: "success",
+      message: "Reset token sent to email"
+    });
+  }
+  
+  public async resetPassword(req: Request, res: Response): Promise<void> {
+
+    const { token } = req.params;
+    const { password } = req.body;
+
+    await this.userService.resetPassword(token, password);
+
+    res.status(200).json({
+      status: "success",
+      message: "Password succesfully reseted"
+    });
+  }
+
   public async getAll(req: Request, res: Response): Promise<void> {
   
     const users = await this.userService.getAll();
 
     res.status(200).json({
       status: "success",
-      data: users 
+      data: users
     });
   }
 

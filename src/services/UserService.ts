@@ -10,6 +10,9 @@ import { User } from "../@types/models/User";
 import { ObjectId } from "mongoose";
 import { NotFoundError } from "../@types/errors/NotFoundError";
 import { EmptyBodyError } from "../@types/errors/EmptyBodyError";
+import { Request } from "express";
+import { sendEmail } from "../helpers/sendEmail";
+import * as crypto from "crypto";
 
 export class UserService implements IUserService {
   private JWT_EXPIRATION_TIME = '1h';
@@ -46,14 +49,47 @@ export class UserService implements IUserService {
     return { user: userWithoutPassword, token };
   }
 
-  public async forgotPassword(email: string): Promise<void> {
+  public async forgotPassword(email: string, req: Request): Promise<void> {
     
     const user = await userModel.findOne({ email });
     if (!user) throw new NotFoundError('User');
   
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
+
+    const resetUrl = `
+      ${
+        req.protocol
+      }://${
+        req.get('host')
+      }/api/v1/users/resetPassword/${resetToken}
+    `;
+    
+    // email
+    const subject = `${user.firstName}, here's is your reset-password token.`;
+    const body = `Url to reset password with a PATCH request: ${resetUrl}`;
+
+    await sendEmail({ subject, body }, user);
   }
+
+  public async resetPassword(resetToken: string, password: string): Promise<void> {
+
+    const hash = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    const user = await userModel
+      .findOne({
+        passwordResetToken: hash,
+        passwordResetExpires: { $gt: new Date() }
+      });
+
+    if (!user) throw new NotFoundError('user');
+
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save();
+  } 
 
   public async getAll(): Promise<UserWithoutPassword[]> {
     const users = await userModel.find();
