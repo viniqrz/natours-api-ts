@@ -8,6 +8,7 @@ import { generateJwt } from "../helpers/generateJwt";
 import { userModel } from '../models/userModel';
 import { User } from "../@types/models/User";
 import { ObjectId } from "mongoose";
+import { NotFoundError } from "../@types/errors/NotFoundError";
 
 export class UserService implements IUserService {
   private JWT_EXPIRATION_TIME = '1h';
@@ -53,10 +54,19 @@ export class UserService implements IUserService {
   public async getOne(id: string): Promise<UserWithoutPassword> {
     const user = await userModel.findById(id);
 
+    if (!user) throw new NotFoundError("User");
+
     return this.omitPassword(user);
   }
 
-  public async update(id: string, partial: PartialUserDto): Promise<UserWithoutPassword> {
+  public async update(
+    id: string,
+    partial: PartialUserDto
+  ): Promise<UserWithoutPassword> {
+    if ('password' in partial) {
+      partial.password = await createHash(partial.password);
+    }
+    
     const user = await userModel.findByIdAndUpdate(id, partial);
 
     return this.omitPassword(user);
