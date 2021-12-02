@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import { TourService } from "../services/TourService";
 import { TourController } from "../controllers/TourController";
 import { catchAsync } from "../helpers/catchAsync";
 import { ensureAuth } from "../middlewares/ensureAuth";
@@ -7,7 +8,8 @@ import { restrictTo } from "../middlewares/restrictTo";
 
 const router = Router();
 
-const tourController = new TourController();
+const tourService = new TourService();
+const tourController = new TourController(tourService);
 
 router
   .route("/tours")
@@ -17,10 +19,6 @@ router
       restrictTo(["admin", "guide", "lead-guide"]),
       catchAsync(tourController.create)
     );
-
-router
-  .route("/tour-stats")
-    .get(ensureAuth, tourController.getTourStats);
 
 router
   .route("/tours/:id")

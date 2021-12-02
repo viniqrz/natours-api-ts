@@ -1,4 +1,5 @@
 import { User } from "./User"
+import { Schema } from 'mongoose';
 
 export type Location = {
   type: string,
@@ -33,5 +34,5 @@ export interface Tour {
   secretTour?: boolean;
   startLocation: Location,
   locations: LocationAndDay[],
-  guides: Array<User>,
+  guides: Array<Schema.Types.ObjectId>,
 }
