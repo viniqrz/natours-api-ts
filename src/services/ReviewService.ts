@@ -10,7 +10,7 @@ export class ReviewService implements IReviewService {
   }
 
   public async getOne(id: string): Promise<Review> {
-    const review = await ReviewModel.findById(id);
+    const review = await ReviewModel.findById(id).populate('User').populate('Tour');
 
     if (!review) throw new NotFoundError('Review');
 
