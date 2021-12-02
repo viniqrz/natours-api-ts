@@ -1,21 +1,8 @@
-import { User } from "./User"
+import { Tour, Location, LocationAndDay } from '../models/Tour';
+import { User } from '../models/User';
 
-export type Location = {
-  type: string,
-  coordinates: number[],
-  address: string,
-  description: string,
-}
 
-export type LocationAndDay = {
-  type: string,
-  coordinates: number[],
-  address: string,
-  description: string,
-  day: number,
-}
-
-export interface Tour {
+export interface TourDto {
   name: string;
   duration: number;
   maxGroupSize: number;
@@ -33,5 +20,5 @@ export interface Tour {
   secretTour?: boolean;
   startLocation: Location,
   locations: LocationAndDay[],
-  guides: Array<User>,
+  guides: Array<string>,
 }
