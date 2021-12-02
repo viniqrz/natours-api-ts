@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { TourModel } from "../models/tourModel";
+import { TourModel } from "../models/TourModel";
 import { APIFeatures } from "../helpers/APIFeatures";
 import { NotFoundError } from "../@types/errors/NotFoundError";
 
@@ -34,7 +34,7 @@ class TourController {
   public async getOne(req: Request, res: Response): Promise<void> {
     const { id } = req.params;
 
-    const tour = await TourModel.findOne({ _id: id });
+    const tour = await TourModel.findOne({ _id: id }).populate('User');
 
     if (!tour) throw new NotFoundError("Tour");
 

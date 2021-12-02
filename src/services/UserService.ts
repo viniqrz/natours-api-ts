@@ -1,17 +1,20 @@
 import { WrongEmailOrPasswordError } from "../@types/errors/WrongEmailOrPasswordError";
-import { PartialUserDto, UserAndToken, UserDto, UserWithoutPassword } from "../@types/dtos/UserDto";
+import { ExpiredResetTokenError } from "../@types/errors/ExpiredResetToken";
 import { UserAlreadyExistsError } from "../@types/errors/UserAlreadyExistsError";
+import { EmptyBodyError } from "../@types/errors/EmptyBodyError";
+import { NotFoundError } from "../@types/errors/NotFoundError";
+
+import { PartialUserDto, UserAndToken, UserDto, UserWithoutPassword } from "../@types/dtos/UserDto";
+import { User } from "../@types/models/User";
+import { Request } from "express";
+
 import { IUserService } from "../@types/services/IUserService";
 import { compareHash } from "../helpers/compareHash";
 import { createHash } from "../helpers/createHash";
 import { generateJwt } from "../helpers/generateJwt";
-import { userModel } from '../models/userModel';
-import { User } from "../@types/models/User";
-import { ObjectId } from "mongoose";
-import { NotFoundError } from "../@types/errors/NotFoundError";
-import { EmptyBodyError } from "../@types/errors/EmptyBodyError";
-import { Request } from "express";
 import { sendEmail } from "../helpers/sendEmail";
+
+import { UserModel } from '../models/UserModel';
 import * as crypto from "crypto";
 
 export class UserService implements IUserService {
@@ -21,12 +24,12 @@ export class UserService implements IUserService {
 
     const { email, password } = dto;
 
-    const userAlreadyExists = await userModel.findOne({ email });
+    const userAlreadyExists = await UserModel.findOne({ email });
     if (userAlreadyExists) throw new UserAlreadyExistsError();
 
     dto.password = await createHash(password);
 
-    const user = await userModel.create(dto);
+    const user = await UserModel.create(dto);
     const userWithoutPassword = this.omitPassword(user);
 
     return userWithoutPassword;
@@ -37,7 +40,7 @@ export class UserService implements IUserService {
     password: string
   ): Promise<UserAndToken> {
 
-    const user = await userModel.findOne({ email });
+    const user = await UserModel.findOne({ email });
     if (!user) throw new WrongEmailOrPasswordError();
 
     const match = await compareHash(password, user.password);
@@ -51,7 +54,7 @@ export class UserService implements IUserService {
 
   public async forgotPassword(email: string, req: Request): Promise<void> {
     
-    const user = await userModel.findOne({ email });
+    const user = await UserModel.findOne({ email });
     if (!user) throw new NotFoundError('User');
   
     const resetToken = user.createPasswordResetToken();
@@ -66,7 +69,7 @@ export class UserService implements IUserService {
     `;
     
     // email
-    const subject = `${user.firstName}, here's is your reset-password token.`;
+    const subject = `${user.name}, here's is your reset-password token.`;
     const body = `Url to reset password with a PATCH request: ${resetUrl}`;
 
     await sendEmail({ subject, body }, user);
@@ -76,14 +79,14 @@ export class UserService implements IUserService {
 
     const hash = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-    const user = await userModel
+    const user = await UserModel
       .findOne({
         passwordResetToken: hash
       });
-
     if (!user) throw new NotFoundError('user');
 
-    if (user.passwordResetExpires < new Date()) throw new NotFoundError('user');
+    const tokenExpired = user.passwordResetExpires < new Date();
+    if (tokenExpired) throw new ExpiredResetTokenError();
 
     user.password = await createHash(password);
     user.passwordResetToken = undefined;
@@ -95,13 +98,13 @@ export class UserService implements IUserService {
   } 
 
   public async getAll(): Promise<UserWithoutPassword[]> {
-    const users = await userModel.find();
+    const users = await UserModel.find();
 
     return users.map((u) => this.omitPassword(u));
   }
 
   public async getOne(id: string): Promise<UserWithoutPassword> {
-    const user = await userModel.findById(id);
+    const user = await UserModel.findById(id);
 
     if (!user) throw new NotFoundError("User");
 
@@ -118,7 +121,7 @@ export class UserService implements IUserService {
       partial.password = await createHash(partial.password);
     }
     
-    const user = await userModel.findByIdAndUpdate({ _id }, partial);
+    const user = await UserModel.findByIdAndUpdate({ _id }, partial);
 
     Object.keys(partial).forEach((key) => user[key] = partial[key]);
 
@@ -126,7 +129,7 @@ export class UserService implements IUserService {
   }
 
   public async delete(id: string): Promise<UserWithoutPassword> {
-    return userModel.findByIdAndDelete(id);
+    return UserModel.findByIdAndDelete(id);
   }
 
   private omitPassword(user: User): UserWithoutPassword {

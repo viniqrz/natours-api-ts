@@ -1,7 +1,6 @@
 export interface UserDto {
   _id?: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   password: string;
   photo?: string;
@@ -10,8 +9,7 @@ export interface UserDto {
 
 export interface PartialUserDto {
   _id?: string;
-  firstName?: string;
-  lastName?: string;
+  name?: string;
   email?: string;
   password?: string;
   photo?: string;
@@ -19,8 +17,7 @@ export interface PartialUserDto {
 
 export interface UserWithoutPassword {
   _id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
   photo?: string;
   role: "user" | "guide" | "lead-guide" | "admin";

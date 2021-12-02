@@ -1,5 +1,8 @@
 import { Schema, model } from "mongoose";
 import { Tour } from "../@types/models/Tour";
+import { UserModel } from "./UserModel";
+import * as mongoose from "mongoose";
+
 
 const tourSchema = new Schema<Tour>(
   {
@@ -43,6 +46,35 @@ const tourSchema = new Schema<Tour>(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      }
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },

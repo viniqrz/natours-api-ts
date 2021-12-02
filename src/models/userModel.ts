@@ -1,16 +1,12 @@
 import { Model, model, Schema } from "mongoose";
 import { User } from "../@types/models/User";
 import isEmail from "validator/lib/isEmail";
+
 import * as dayjs from 'dayjs';
 import * as crypto from 'crypto';
 
 const userSchema = new Schema<User>({
-  firstName: {
-    type: String,
-    maxlength: [30, "Name can't be longer than 80 characters"],
-    required: [true, "User must have a name"],
-  },
-  lastName: {
+  name: {
     type: String,
     maxlength: [50, "Last name can't be longer than 80 characters"],
     required: [true, "User must have a last name"],
@@ -54,6 +50,6 @@ userSchema.methods.createPasswordResetToken = function() {
   return resetToken;
 }
 
-const userModel = model<User>("User", userSchema);
+const UserModel = model<User>("User", userSchema);
 
-export { userModel };
+export { UserModel };
