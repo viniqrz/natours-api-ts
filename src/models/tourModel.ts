@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 import { Tour } from "../@types/models/Tour";
 import { UserModel } from "./UserModel";
 import * as mongoose from "mongoose";
-
+  
 
 const tourSchema = new Schema<Tour>(
   {
@@ -85,6 +85,13 @@ const tourSchema = new Schema<Tour>(
 tourSchema.pre("find", function (next) {
   this.find({ secretTour: { $ne: true } });
   next();
+});
+
+// Virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id'
 });
 
 const TourModel = model<Tour>("Tour", tourSchema);

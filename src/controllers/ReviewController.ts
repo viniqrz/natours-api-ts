@@ -1,5 +1,6 @@
 import { ReviewService } from "../services/ReviewService";
 import { Request, Response } from "express";
+import { IRequest } from "../@types/express/IRequest";
 
 export class ReviewController {
   constructor(private reviewService: ReviewService) {
@@ -11,7 +12,11 @@ export class ReviewController {
   }
 
   public async getAll(req: Request, res: Response): Promise<void> {
-    const reviews = await this.reviewService.getAll();
+    let filter = {};
+
+    if (req.params.tourId) filter = { tour: req.params.tourId };
+
+    const reviews = await this.reviewService.getAll(filter);
 
     res.json({
       status: "success",
@@ -34,7 +39,10 @@ export class ReviewController {
     });
   }
 
-  public async create(req: Request, res: Response): Promise<void> {
+  public async create(req: IRequest, res: Response): Promise<void> {
+    if (!req.body.user) req.body.user = req.user._id;
+    if (!req.body.tour) req.body.tour = req.params.tourId;
+
     const review = await this.reviewService.create(req.body);
 
     res.status(201).json({

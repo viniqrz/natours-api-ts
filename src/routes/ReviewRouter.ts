@@ -7,15 +7,15 @@ import { ReviewService } from '../services/ReviewService';
 const reviewService = new ReviewService();
 const reviewController = new ReviewController(reviewService);
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
 router
-  .route('/reviews')
+  .route('/')
   .get(ensureAuth, catchAsync(reviewController.getAll))
   .post(ensureAuth, catchAsync(reviewController.create));
 
 router
-  .route('/reviews/:id')
+  .route('/:id')
   .get(ensureAuth, catchAsync(reviewController.getOne))
   .patch(ensureAuth, catchAsync(reviewController.update))
   .delete(ensureAuth, catchAsync(reviewController.delete));

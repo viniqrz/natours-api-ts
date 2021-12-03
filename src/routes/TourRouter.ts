@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { reviewRouter } from "./ReviewRouter";
 
 import { TourService } from "../services/TourService";
 import { TourController } from "../controllers/TourController";
@@ -33,5 +34,7 @@ router
       restrictTo(["admin", "guide", "lead-guide"]),
       catchAsync(tourController.delete)
     );
+
+router.use('/tours/:tourId/reviews', reviewRouter);        
 
 export { router as tourRouter };
