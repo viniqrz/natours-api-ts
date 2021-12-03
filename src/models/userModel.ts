@@ -9,7 +9,7 @@ const userSchema = new Schema<User>({
   name: {
     type: String,
     maxlength: [50, "Last name can't be longer than 80 characters"],
-    required: [true, "User must have a last name"],
+    required: [true, "User must have a name"],
   },
   email: {
     type: String,

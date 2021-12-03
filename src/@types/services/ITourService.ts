@@ -7,4 +7,9 @@ export interface ITourService {
   create(dto: TourDto): Promise<Tour>;
   update(id: string, partial: PartialTourDto): Promise<Tour>;
   delete(id: string): Promise<Tour>;
+  getToursByDistance(
+    distance: number,
+    latlng: string,
+    unit: string  
+  ): Promise<Tour[]>
 }

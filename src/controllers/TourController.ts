@@ -11,6 +11,7 @@ class TourController {
     this.update = this.update.bind(this);
     this.delete = this.delete.bind(this);
     this.create = this.create.bind(this);
+    this.getToursByDistance = this.getToursByDistance.bind(this);
   }
 
   public async getAll(req: Request, res: Response): Promise<void> {
@@ -35,6 +36,19 @@ class TourController {
         tour,
       },
     });
+  }
+
+  public async getToursByDistance(req: Request, res: Response): Promise<void> {
+    // .route("/tours/tours-distance/:distance/center/:latlng/unit/:unit")    
+
+    const { distance, latlng, unit } = req.params;
+
+    const tours = await this.tourService.getToursByDistance(Number(distance), latlng, unit);
+
+    res.json({
+      status: 'success',
+      data: tours
+    })
   }
 
   public async create(req: Request, res: Response): Promise<void> {

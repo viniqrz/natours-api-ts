@@ -21,6 +21,10 @@ router
       catchAsync(tourController.create)
     );
 
+router 
+  .route("/tours/distance/:distance/center/:latlng/unit/:unit")
+  .get(ensureAuth, catchAsync(tourController.getToursByDistance));
+
 router
   .route("/tours/:id")
     .get(ensureAuth, catchAsync(tourController.getOne))

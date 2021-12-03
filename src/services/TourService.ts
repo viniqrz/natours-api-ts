@@ -4,6 +4,7 @@ import { PartialTourDto, TourDto } from '../@types/dtos/TourDto';
 import { NotFoundError } from '../@types/errors/NotFoundError';
 import { ITourService } from '../@types/services/ITourService';
 import { APIFeatures } from '../helpers/APIFeatures';
+import { NoCoordsError } from '../@types/errors/NoCoordsError';
 
 export class TourService implements ITourService {
   public async getAll(query: any): Promise<Tour[]> {
@@ -16,6 +17,25 @@ export class TourService implements ITourService {
 
     // Executes mongoose query
     const tours = await features.getQuery();
+
+    return tours;
+  }
+
+  public async getToursByDistance(
+    distance: number,
+    latlng: string,
+    unit: string  
+  ): Promise<Tour[]> {
+    const [lat, lng] = latlng.split(',').map((c) => Number(c));
+
+    if (!lat || !lng) throw new NoCoordsError();
+
+    const radius = unit === "mi" ? distance / 3963.2 : distance / 6378.1;
+
+    const tours = await TourModel
+      .find()
+      .where('startLocation')
+      .within({ center: [lat,lng], radius, spherical: true });
 
     return tours;
   }
