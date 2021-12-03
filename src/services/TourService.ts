@@ -41,7 +41,7 @@ export class TourService implements ITourService {
   }
 
   public async getOne(id: string): Promise<Tour> {
-    const tour = await TourModel.findById(id).populate('guides');
+    const tour = await TourModel.findById(id);
     if (!tour) throw new NotFoundError('Tour');
 
     return tour;

@@ -4,7 +4,7 @@ import { NotFoundError } from "../@types/errors/NotFoundError";
 import { Review } from "../@types/models/Review";
 import { IReviewService } from "../@types/services/IReviewService";
 import { ReviewModel } from "../models/ReviewModel";
-
+  
 export class ReviewService implements IReviewService {
   public async getAll(filter: { tour?: Schema.Types.ObjectId }): Promise<Review[]> {
     return await ReviewModel.find({ ...filter });
