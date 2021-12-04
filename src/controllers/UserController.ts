@@ -75,7 +75,7 @@ export class UserController {
   
   public async getOne(req: Request, res: Response): Promise<void> {
 
-    const { id } = req.params;
+    const { id } = req.params; 
 
     const user = await this.userService.getOne(id);
 

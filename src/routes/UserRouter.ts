@@ -5,6 +5,9 @@ import { UserService } from "../services/UserService";
 import { ensureAuth } from '../middlewares/ensureAuth';
 import { ensureIsOwnerOrAdmin } from "../middlewares/ensureIsOwnerOrAdmin";
 import { ensureBodyIsUser } from "../middlewares/ensureBodyIsUser";
+import * as multer from "multer";
+
+const upload = multer({ dest: 'public/img/users' });
 
 const router = Router();
 
@@ -29,12 +32,12 @@ router
 router
   .route('/users/:id')
   .get(ensureAuth, catchAsync(getOne))
-  .patch(ensureAuth, ensureIsOwnerOrAdmin, catchAsync(update))
+  .patch(ensureAuth, ensureIsOwnerOrAdmin, upload.single('photo'), catchAsync(update))
   .delete(ensureAuth, ensureIsOwnerOrAdmin, catchAsync(userController.delete));
 
 router
   .route('/users/authenticate')
-    .post(catchAsync(authenticate));
+  .post(catchAsync(authenticate));
 
 router.post('/users/forgotPassword', catchAsync(forgotPassword));
 router.patch('/users/resetPassword/:token', catchAsync(resetPassword));

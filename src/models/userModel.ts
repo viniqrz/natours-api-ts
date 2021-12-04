@@ -8,7 +8,7 @@ import * as crypto from 'crypto';
 const userSchema = new Schema<User>({
   name: {
     type: String,
-    maxlength: [50, "Last name can't be longer than 80 characters"],
+    maxlength: [50, "Last name can't be longer than 50 characters"],
     required: [true, "User must have a name"],
   },
   email: {
